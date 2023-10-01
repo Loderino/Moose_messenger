@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Пишите</title>
+</head>
+<body>
+    <div id="d" style="width: 100%; padding-bottom: 10px;" ></div>
+        <input type="text" name="message" placeholder="", id = "i">
+        <br><br>
+        <input type="submit" value="Submit" name="ok", id = "b"/>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script>
+            function sendMessage() {
+                var message = document.getElementById("i").value;
+                $.ajax({
+                    url: "/Send_message",
+                    type: "POST",
+                    contentType: "json",
+                    data: JSON.stringify({"message": message, "username": "{{context['username']}}"}),
+                    success: function(data) {
+                        console.log(data);  
+                    }
+                });
+            }
+            
+            document.getElementById("b").onclick = sendMessage;
+            
+            function getMessages() {
+                $.ajax({
+                    url: "/Get_messages",
+                    type: "POST",
+                    success: function(data) {
+                        itog = ""
+                        data.forEach(element => {
+                            itog+="<br>"+element["time"]+"---"+ element["username"] +"---"+ element["content"]+"</br>"
+                        });
+                        document.getElementById("d").innerHTML = itog 
+                    }
+                });
+            }
+            setInterval(getMessages, 1000);
+            </script>
+</body>
+</html>
