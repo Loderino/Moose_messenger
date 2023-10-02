@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Пишите</title>
+    <link type="text/css" href="{{ url_for('static', filename='css/main_page_style.css')}}" rel="stylesheet" />
 </head>
 <body>
-    <div id="d" style="width: 100%; padding-bottom: 10px;" ></div>
-        <input type="text" name="message" placeholder="", id = "i">
+    <div id="chat_div" style="width: 100%; padding-bottom: 10px;" ></div>
+        <input type="text" name="message" placeholder="", id = "message_text">
         <br><br>
-        <input type="submit" value="Submit" name="ok", id = "b"/>
+        <input type="submit" value="отправить" name="ok", id = "send_button"/>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>
             function sendMessage() {
-                var message = document.getElementById("i").value;
+                var message = document.getElementById("message_text").value;
                 $.ajax({
                     url: "/Send_message",
                     type: "POST",
@@ -24,7 +25,16 @@
                 });
             }
             
-            document.getElementById("b").onclick = sendMessage;
+            document.getElementById("send_button").onclick = sendMessage;
+
+            function get_side(username){
+                if ("{{context['username']}}" == username){
+                    return "right"
+                }
+                else{
+                    return "left"
+                }
+            }
             
             function getMessages() {
                 $.ajax({
@@ -33,9 +43,9 @@
                     success: function(data) {
                         itog = ""
                         data.forEach(element => {
-                            itog+="<br>"+element["time"]+"---"+ element["username"] +"---"+ element["content"]+"</br>"
+                            itog+="<br><div class='message' style='float:" +get_side(element["username"])+ "'>"+element["time"]+"---"+ element["username"] +"---"+ element["content"]+"</div></br>"
                         });
-                        document.getElementById("d").innerHTML = itog 
+                        document.getElementById("chat_div").innerHTML = itog 
                     }
                 });
             }
