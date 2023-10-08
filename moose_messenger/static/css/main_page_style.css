@@ -1,18 +1,33 @@
 #chat_div { position: relative;
+            display:block;
             background-color: cyan;
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 14pt;    
+            font-size: 120%;    
             font-style: italic;
             font-weight: 500;
-        }
+            min-height: 10%;
+            max-height: 80vh; /* устанавливаем максимальную высоту в 80% от высоты видимой области */
+            overflow-y: auto; /* добавляем вертикальную прокрутку, если контент выходит за границы элемента */
+}
 
-.message {position: flex;
+.message {position: relative;
+            display: block;
             background-color: white;
-            right: 0;
-            height: 20pt;
-            border-radius: 25%;
+            clear: both;
+            border-radius: 5%;
             justify-content: center;
+            margin-top: 1%;
             margin-left: 1%;
             margin-right: 1%;
+            min-width: 10%;
+            max-width: 50%;
+            min-height: 10%;
+            overflow: auto;
+}
+
+.time_code { position: relative;
+             background-color: pink;
+             font-size: 50%;
+             text-emphasis-color: "grey";
 }
 

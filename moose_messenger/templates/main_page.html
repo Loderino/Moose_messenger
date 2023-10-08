@@ -36,6 +36,44 @@
                 }
             }
             
+            function create_message_div(message, time_code, username){
+                message_div = "<div class='message' style='float:" +get_side(username)+ "'>" + split_to_rows(message)+ "<div class = 'time_code'>"+time_code+"</div>"+ "</div>";
+                return message_div
+            }
+
+            function split_to_rows(str){
+                var words = str.split(' ');
+                var lines = [];
+                var currentLine = '';
+
+                for (var i = 0; i < words.length; i++) {
+                    var word = words[i];
+
+                    // Если слово длиннее 70 символов, разбиваем его на части
+                    if (word.length > 70) {
+                        var parts = word.match(/.{1,70}/g);
+                        lines.push(...parts);
+                        currentLine = '';
+                        continue;
+                    }
+
+                    // Проверяем, не превысит ли текущая строка 70 символов, если добавить к ней это слово
+                    if ((currentLine + word).length > 70) {
+                        lines.push(currentLine.trim());
+                        currentLine = word + ' ';
+                    } else {
+                        currentLine += word + ' ';
+                    }
+                }
+
+                // Добавляем оставшуюся строку, если она не пустая
+                if (currentLine.trim() !== '') {
+                    lines.push(currentLine.trim());
+            }
+
+    return lines.join('<br>');
+}
+
             function getMessages() {
                 $.ajax({
                     url: "/Get_messages",
@@ -43,7 +81,7 @@
                     success: function(data) {
                         itog = ""
                         data.forEach(element => {
-                            itog+="<br><div class='message' style='float:" +get_side(element["username"])+ "'>"+element["time"]+"---"+ element["username"] +"---"+ element["content"]+"</div></br>"
+                            itog+=create_message_div(element["content"], element["time"], element["username"])
                         });
                         document.getElementById("chat_div").innerHTML = itog 
                     }
