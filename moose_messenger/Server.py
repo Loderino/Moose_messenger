@@ -1,7 +1,7 @@
 from datetime import datetime
 import json
 from flask import Flask, render_template, request, redirect, url_for, session
-from moose_messenger.accounts_functions import check_user_access, create_user_account
+from moose_messenger.accounts_functions import check_user_access, create_user_account, sessions_keys
 
 app = Flask(__name__)
 app.secret_key = '73870e7f-634d-433b-946a-8d20132bafac'
@@ -14,14 +14,13 @@ def index():
 def chatting():
     return render_template("main_page.html", context=session.get("data"))
 
-
 @app.route('/Access_checking',  methods=['POST'])
 def Access_checking():
     email = request.form['email']
     password = request.form['password']
     access = check_user_access(email, password)
     if access:
-        session['data'] = {"username": access}
+        session['data'] = {"username": access[0], "session": access[1]}
         return redirect(url_for('chatting'))
     else:
         return render_template("login.html", context = {"message": "Неверный логин или пароль"})
@@ -32,16 +31,18 @@ def Create_account():
     email = request.form['email']
     username = request.form['username']
     password = request.form['password']
-    ans = create_user_account(email, password, username)
+    ans, desc = create_user_account(email, password, username)
     if ans:
-        session['data'] = {"username": username}
+        session['data'] = {"username": username, "session": desc}
         return redirect(url_for('chatting'))
     else:
-        return render_template("register.html", context = {"message": "Учётная запись с таким логином уже существует"})
+        return render_template("register.html", context = {"message": desc})
         
 @app.route('/Send_message',  methods=['POST'])
 def Send_message():
     mes = json.loads(request.data.decode(encoding="utf-8"))
+    if mes["session"] not in sessions_keys:
+        return ("nahuy otsuda, blyat")
     with open ("message_hystory.json") as file:
         messages = json.load(file)
     now = datetime.now()
@@ -68,9 +69,5 @@ def register():
    if request.method == 'GET':
        return render_template('register.html', context = {"message": ""})
    
-@app.route("/design/main_page_style.css")
-def get_design():
-    return ('design/main_page_style.css')
-
 if __name__ == "__main__":
    app.run(host="0.0.0.0", port="5000")

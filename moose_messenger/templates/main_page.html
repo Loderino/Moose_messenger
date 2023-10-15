@@ -18,7 +18,7 @@
                     url: "/Send_message",
                     type: "POST",
                     contentType: "json",
-                    data: JSON.stringify({"message": message, "username": "{{context['username']}}"}),
+                    data: JSON.stringify({"message": message, "username": "{{context['username']}}", "session": "{{context['session']}}"}),
                     success: function(data) {
                         console.log(data);  
                     }
@@ -37,7 +37,7 @@
             }
             
             function create_message_div(message, time_code, username){
-                message_div = "<div class='message' style='float:" +get_side(username)+ "'>" + split_to_rows(message)+ "<div class = 'time_code'>"+time_code+"</div>"+ "</div>";
+                message_div = "<div class='message' style='float:" +get_side(username)+ "'>"+"<div class = 'username'>"+username+"</div>"+"<div class = 'message_content'>"+split_to_rows(message)+"</div>"+"<div class = 'time_code'>"+time_code+"</div>"+ "</div>";
                 return message_div
             }
 
